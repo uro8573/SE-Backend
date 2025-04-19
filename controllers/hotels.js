@@ -4,9 +4,13 @@ const Booking = require("../models/Booking");
 //@desc         Get all hotels
 //@route        GET /api/v1/hotels
 //@access       Public
+//@desc         Get all hotels
+//@route        GET /api/v1/hotels
+//@access       Public
 exports.getHotels=async(req,res,next)=>{
     try {
         let query;
+        let customSort;
 
         // Copy req.query
         const reqQuery = {...req.query};
@@ -30,12 +34,36 @@ exports.getHotels=async(req,res,next)=>{
         }
 
         // Sort
+        if (req.query.sort) {
+            const sortParam = req.query.sort;
+            if (sortParam === 'star-rating') {
+                customSort = 'starRating';
+            }
+            else if (sortParam === 'lowest-price') {
+                query = query.sort({ dailyRate: 1 });
+            }
+            else if (sortParam === 'highest-price') {
+                query = query.sort({ dailyRate: -1 });
+            }
+            else if (sortParam === 'top-reviewed') {
+                query = query.sort({ userRatingCount: -1 });
+            }
+            else { // default sort by name 
+                const sortBy = sortParam.split(',').join(' ');
+                query = query.sort(sortBy);
+            }
+        }
+        else {
+            query = query.sort('-createdAt');
+        }
+        /*
         if(req.query.sort) {
             const sortBy = req.query.sort.split(',').join(' ');
             query=query.sort(sortBy);
         } else {
             query = query.sort('-createdAt');
         }
+        */
 
         // Pagination
         const page = parseInt(req.query.page, 10) || 1;
@@ -46,7 +74,18 @@ exports.getHotels=async(req,res,next)=>{
         query = query.skip(startIndex).limit(limit);
 
         // Executing query
-        const hotels = await query;
+        let hotels = await query;
+
+        console.log("Custom Sort:", customSort);
+        // Apply custom star-rating sort
+        if (customSort === 'starRating') {
+            hotels = hotels.sort((a, b) => {
+                const aRating = (a.userRatingCount > 0 ? a.ratingSum / a.userRatingCount : 0);
+                const bRating = (b.userRatingCount > 0 ? b.ratingSum / b.userRatingCount : 0);
+                return bRating - aRating;
+            });
+        }
+        console.log("Hotels fetched:", hotels);
 
         // Pagination result
         const pagination = {};
