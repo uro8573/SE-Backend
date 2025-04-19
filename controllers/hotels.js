@@ -135,28 +135,3 @@ exports.deleteHotel=async(req,res,next)=>{
         res.status(400).json({success:false});
     }
 }
-
-//@desc         Add hotel rating
-//@route        POST /api/v1/hotels/:id
-//@access       Private
-exports.addRating=async(req,res,next)=>{
-    try {
-        const hotel = await Hotel.findOne({id: req.params.id});
-
-        if(!hotel || !req.body.rating) {
-            return res.status(400).json({success:false});
-        }
-
-        const currentRating = hotel.ratingSum;
-        const currentUserVotes = hotel.userRatingCount;
-        
-        await Hotel.updateOne(hotel, {
-            ratingSum: currentRating + req.body.rating,
-            userRatingCount: currentUserVotes + 1,
-        });
-
-        res.status(200).json({success:true, data: hotel});
-    } catch(err) {
-        res.status(400).json({success: false});
-    }
-}
