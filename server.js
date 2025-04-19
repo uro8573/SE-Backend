@@ -23,7 +23,9 @@ connectDB();
 //Cookie Parser
 app.use(cookieParser());
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
 
 app.use("/api/v1/hotels", hotels);
 app.use("/api/v1/auth", auth);
