@@ -44,7 +44,7 @@ exports.getReviews = async (req, res, next) => {
 }
 
 // @desc     Get a single review for a hotel along with relatable info
-// @route    GET /api/v1/hotels/:hotelId/review/:reviewId
+// @route    GET /api/v1/reviews/:reviewId
 // @access   Public
 
 exports.getReview = async (req, res, next) => {
@@ -89,7 +89,7 @@ exports.getReview = async (req, res, next) => {
 }
 
 //@desc     Add Review
-//@route    POST /api/v1/hotels/:hotelId/review
+//@route    POST /api/v1/reviews
 //@access   Private
 
 exports.addReview = async (req, res, next) => {
@@ -136,7 +136,7 @@ exports.addReview = async (req, res, next) => {
 }
 
 //@desc     Update Reviews
-//@route    PUT /api/v1/reviewss/:id
+//@route    PUT /api/v1/reviews/:id
 //@access   Private
 exports.updateReview = async (req, res, next) => {
     try {
