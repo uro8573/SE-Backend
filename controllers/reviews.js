@@ -177,7 +177,7 @@ exports.addReview = async (req, res, next) => {
 //@access   Private
 exports.updateReview = async (req, res, next) => {
     try {
-        let reviews = await Reviews.findById(req.params.id);
+        let reviews = await Review.findById(req.params.id);
 
         if(!reviews) {
             return res.status(404).json({
