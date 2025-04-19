@@ -9,6 +9,7 @@ const hotels = require("./routes/hotels");
 const auth = require("./routes/auth");
 const bookings = require("./routes/bookings");
 const user = require("./routes/user");
+const review = require("./routes/review")
 
 const app = express();
 app.use(express.json());
@@ -27,6 +28,7 @@ app.use(cors());
 app.use("/api/v1/hotels", hotels);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/bookings", bookings);
+app.use("/api/v1/reviews", reviews);
 app.use("/user", user);
 
 app.get("/", (req, res) => {
