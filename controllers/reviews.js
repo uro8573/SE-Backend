@@ -4,7 +4,7 @@ const Booking = require("../models/Booking");
 
 // @desc     Get reviews for each hotel along with related info
 // @route    GET /api/v1/hotels/:hotelId/reviews
-// @access   Public / Admin
+// @access   Public
 exports.getReviews = async (req, res, next) => {
     let query;
     
@@ -43,6 +43,37 @@ exports.getReviews = async (req, res, next) => {
     }
 }
 
+// @desc     Get current reviews from userId
+// @route    GET /api/v1/user/:userId/reviews
+// @access   Public
+exports.userReview = async (req, res, next) => {
+
+    try {
+
+        const reviews = await Review.find({ user: req.params.userId });
+
+        if(!reviews) {
+            return res.status(404).json({
+                success: false,
+                message: `Can't find review from user id: ${req.params.userId}.`
+            });
+        }
+        
+        res.status(200).json({
+            success: true,
+            count: reviews.count,
+            data: reviews
+        });
+
+    } catch(err) {
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: `Can't get user review.`
+        })
+    }
+
+}
 // @desc     Get a single review for a hotel along with relatable info
 // @route    GET /api/v1/reviews/:reviewId
 // @access   Public
