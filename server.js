@@ -29,7 +29,7 @@ app.use("/api/v1/hotels", hotels);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/bookings", bookings);
 app.use("/api/v1/reviews", reviews);
-app.use("/user", user);
+app.use("/api/v1/user", user);
 
 app.get("/", (req, res) => {
     res.status(200).json({success: true, data:{id:1}});
