@@ -126,25 +126,25 @@ exports.getReview = async (req, res, next) => {
 exports.addReview = async (req, res, next) => {
     try {
 
-        if(!req.body.hotelId) {
+        if(!req.body.hotel) {
             return res.status(400).json({
                 success: false,
                 message: `Must specify hotelId in body before sending request to this route.`
             });
         }
 
-        const hotel = await Hotel.findById(req.body.hotelId);
+        const hotel = await Hotel.findById(req.body.hotel);
 
         if(!hotel) {
             return res.status(404).json({
                 success: false,
-                message: `No hotel with the id of ${req.body.hotelId}`
+                message: `No hotel with the id of ${req.body.hotel}`
             });
         }
 
         const booking = await Booking.findOne({
             user: req.user.id,
-            hotel: req.body.hotelId,
+            hotel: req.body.hotel,
             checkOutDate: { $lt: new Date() }
         })
 
