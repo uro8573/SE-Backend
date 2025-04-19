@@ -1,5 +1,6 @@
 const Review = require ('../models/Review');
 const Hotel = require("../models/Hotel");
+const Booking = require("../models/Booking");
 
 // @desc     Get reviews for each hotel along with related info
 // @route    GET /api/v1/hotels/:hotelId/reviews
@@ -45,6 +46,7 @@ exports.getReviews = async (req, res, next) => {
 // @desc     Get a single review for a hotel along with relatable info
 // @route    GET /api/v1/hotels/:hotelId/review/:reviewId
 // @access   Public
+
 exports.getReview = async (req, res, next) => {
     try {
         const review = await Review.findById(req.params.reviewId)
@@ -90,18 +92,29 @@ exports.getReview = async (req, res, next) => {
 //@route    POST /api/v1/hotels/:hotelId/review
 //@access   Private
 
-
-//อันนี้ไม่รู้ทำทำไม
-
 exports.addReview = async (req, res, next) => {
     try {
-        req.body.hotel = req.params.hotelId;
+        const hotelId = req.params.hotelId;
+        req.body.hotel = hotelId;
 
         const hotel = await Hotel.findById(req.params.hotelId);
         if(!hotel) {
             return res.status(404).json({
                 success: false,
                 message: `No hotel with the id of ${req.params.hotelId}`
+            });
+        }
+
+        const booking = await Booking.findOne({
+            user: req.user.id,
+            hotel: req.user.hotelId,
+            checkOutDate: { $lt: new Date() }
+        })
+
+        if (!booking) {
+            return res.status(403).json({
+                success: false,
+                message: "You must have completed a stay at this hotel before leaving a review."
             });
         }
 
