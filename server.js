@@ -9,7 +9,7 @@ const hotels = require("./routes/hotels");
 const auth = require("./routes/auth");
 const bookings = require("./routes/bookings");
 const user = require("./routes/user");
-const reviews = require("./routes/review")
+const reviews = require("./routes/reviews")
 
 const app = express();
 app.use(express.json());
