@@ -6,4 +6,4 @@ const {protect, authorize} = require("../middleware/auth");
 router.route("/").get(protect, getReviews).post(protect, addReview);
 router.route("/:id").get(protect, getReview).put(protect, updateReview).delete(protect, deleteReview);
 
-module.export = router;
+module.exports = router;

@@ -13,7 +13,6 @@ const ReviewSchema = new mongoose.Schema({
     },
     comment: {
         type: String,
-        ref: "Comment",
         required: true
     },
     createdAt: {
