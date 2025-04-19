@@ -9,7 +9,7 @@ const {protect} = require("../middleware/auth");
 const { userReview } = require('../controllers/reviews');
 
 // Re route into other resource routers
-router.use("/:userId/reviews", userReview);
+router.get("/:userId/reviews", userReview);
 
 router.get('/', protect, getMe);
 
