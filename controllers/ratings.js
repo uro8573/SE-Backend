@@ -21,6 +21,7 @@ exports.addRating=async(req,res,next)=>{
 
         res.status(200).json({success:true, data: hotel});
     } catch(err) {
+        console.error(err);
         res.status(400).json({success: false});
     }
 }
