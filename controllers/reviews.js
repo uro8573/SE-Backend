@@ -24,7 +24,7 @@ exports.getReviews = async (req, res, next) => {
             select: 'name'
         }).populate({
             path: 'user',
-            select: '_id' // Populate user details
+            select: '_id name' // Populate user details
         });
     } else {
         query = Review.find().populate({
