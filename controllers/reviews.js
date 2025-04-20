@@ -58,6 +58,14 @@ exports.userReview = async (req, res, next) => {
                 message: `Can't find review from user id: ${req.params.userId}.`
             });
         }
+
+        // Check if the user is authorized to view this review
+        if (reviews.user.toString() !== req.user.id && req.user.role !== "admin") {
+            return res.status(401).json({
+                success: false,
+                message: `User ${req.user.id} is not authorized to view this review`
+            });
+        }
         
         res.status(200).json({
             success: true,
@@ -142,17 +150,33 @@ exports.addReview = async (req, res, next) => {
             });
         }
 
+        // Check if user can be able to review or not.
+
+        // Check by user booking date.
         const booking = await Booking.findOne({
             user: req.user.id,
             hotel: req.body.hotel,
             checkOutDate: { $lt: new Date() }
-        })
+        });
 
         if (!booking) {
             return res.status(403).json({
                 success: false,
                 message: "You must have completed a stay at this hotel before leaving a review."
             });
+        }
+
+        // Check by user already review or not.
+        const userReview = await Review.findOne({
+            user: req.user.id,
+            hotel: req.body.hotel
+        });
+
+        if (userReview) {
+            return res.status(403).json({
+                sucesss: false,
+                message: "You have already reviewed this hotel."
+            })
         }
 
         // add user id to req.body

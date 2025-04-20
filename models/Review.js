@@ -12,8 +12,11 @@ const ReviewSchema = new mongoose.Schema({
         required: true
     },
     comment: {
-        type: String,
-        required: true
+        type: String
+    },
+    rating: {
+        type: Number,
+        required: [true, "Rating value must be valid."],
     },
     createdAt: {
         type: Date,
