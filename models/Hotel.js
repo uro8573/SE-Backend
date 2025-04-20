@@ -9,6 +9,18 @@ const HotelSchema = new mongoose.Schema({
         trim: true,
         maxlength: [50, "Name can't be more than 50 characters"]
     },
+    picture: {
+        type: String,
+        required: [true, "Please add link a picture"]
+    },
+    description: {
+        type: String,
+        required: true 
+    },
+    about: {
+        type: String, 
+        required: true
+    },
     address: {
         type: String,
         required: [true, "Please add an address"]
@@ -40,6 +52,16 @@ const HotelSchema = new mongoose.Schema({
     userRatingCount: {
         type: Number,
         default: 0
+    },
+    size: {
+        type: String, 
+        default: "Small"
+    },
+    guests: {
+        type: Number,
+        default: 2,
+        min: [2, "Minimum 2 guests required"],
+        max: [4, "Maximum 4 guests allowed"]
     },
     dailyRate: {
         type: String,

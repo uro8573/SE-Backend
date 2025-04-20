@@ -23,7 +23,10 @@ connectDB();
 //Cookie Parser
 app.use(cookieParser());
 
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    credentials : false
+}));
 
 app.use("/api/v1/hotels", hotels);
 app.use("/api/v1/auth", auth);
