@@ -17,6 +17,10 @@ const HotelSchema = new mongoose.Schema({
         type: String,
         required: true 
     },
+    about: {
+        type: String, 
+        required: true
+    },
     address: {
         type: String,
         required: [true, "Please add an address"]
