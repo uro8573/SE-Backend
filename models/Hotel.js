@@ -45,14 +45,6 @@ const HotelSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please add a region"]
     },
-    ratingSum: {
-        type: Number,
-        default: 0
-    },
-    userRatingCount: {
-        type: Number,
-        default: 0
-    },
     size: {
         type: String, 
         default: "Small"
