@@ -50,7 +50,7 @@ exports.getBooking = async (req, res, next) => {
     try {
         const booking = await Booking.findById(req.params.id).populate({
             path: 'hotel',
-            select: 'name description tel'
+            select: 'name description tel id'
         });
 
         if(!booking) {
