@@ -47,7 +47,7 @@ const HotelSchema = new mongoose.Schema({
     },
     size: {
         type: String, 
-        default: Small
+        default: "Small"
     },
     guests: {
         type: Number,
