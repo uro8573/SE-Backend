@@ -86,15 +86,18 @@ exports.getBooking = async (req, res, next) => {
 //@access   Private
 exports.addBooking = async (req, res, next) => {
     try {
-        req.body.hotel = req.params.hotelId;
 
-        const hotel = await Hotel.findById(req.params.hotelId);
+        
+        const hotel = await Hotel.findOne({id: req.params.hotelId});
+        
         if(!hotel) {
             return res.status(404).json({
                 success: false,
                 message: `No hotel with the id of ${req.params.hotelId}`
             });
         }
+        
+        req.body.hotel = hotel._id
 
         // add user id to req.body
         req.body.user = req.user.id;
