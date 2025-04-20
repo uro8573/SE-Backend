@@ -151,16 +151,17 @@ exports.addReview = async (req, res, next) => {
             });
         }
 
-        req.body.hotel = req.params.hotelId;
-
-        const hotel = await Hotel.findById(req.body.hotel);
-
+        
+        const hotel = await Hotel.findOne({id: req.params.hotelId});
+        
         if(!hotel) {
             return res.status(404).json({
                 success: false,
-                message: `No hotel with the id of ${req.body.hotel}`
+                message: `No hotel with the id of ${req.params.hotelId}`
             });
         }
+
+        req.body.hotel = hotel._id;
 
         // Check if user can be able to review or not.
 
