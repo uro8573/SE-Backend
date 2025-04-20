@@ -27,13 +27,24 @@ exports.getReviews = async (req, res, next) => {
             select: '_id name' // Populate user details
         });
     } else {
-        query = Review.find().populate({
-            path: 'hotel',
-            select: 'name address tel'
-        }).populate({
-            path: 'user',
-            select: 'name email' // Populate user details
-        });
+
+        if (req.user.role !== "admin") {
+            query = Review.find({user : req.user.id}).populate({
+                path: 'hotel',
+                select: 'name address tel'
+            }).populate({
+                path: 'user',
+                select: 'name email'
+            });
+        } else {    
+            query = Review.find().populate({
+                path: 'hotel',
+                select: 'name address tel'
+            }).populate({
+                path: 'user',
+                select: 'name email'
+            });
+        }
     }
 
     try {
