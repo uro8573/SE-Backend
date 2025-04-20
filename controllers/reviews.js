@@ -138,18 +138,20 @@ exports.getReview = async (req, res, next) => {
 }
 
 //@desc     Add Review
-//@route    POST /api/v1/reviews
+//@route    POST /api/v1/hotels/:hotelId/reviews
 //@access   Private
 
 exports.addReview = async (req, res, next) => {
     try {
 
-        if(!req.body.hotel) {
+        if(!req.params.hotelId) {
             return res.status(400).json({
                 success: false,
-                message: `Must specify hotelId in body before sending request to this route.`
+                message: `Must specify hotelId in params before sending request to this route.`
             });
         }
+
+        req.body.hotel = req.params.hotelId;
 
         const hotel = await Hotel.findById(req.body.hotel);
 
