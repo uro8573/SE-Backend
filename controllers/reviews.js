@@ -9,12 +9,22 @@ exports.getReviews = async (req, res, next) => {
     let query;
     
     if (req.params.hotelId) {
-        query = Review.find({ hotel: req.params.hotelId }).populate({
+
+        const find_hotel_by_id = await Hotel.findOne({id: req.params.hotelId});
+
+        if(!find_hotel_by_id) {
+            return res.status(404).json({
+                success: false,
+                message: `Can't find hotel with specify id ${req.params.hotelId}`
+            });
+        }
+
+        query = Review.find({ hotel: find_hotel_by_id._id }).populate({
             path: 'hotel',
-            select: 'name address tel'
+            select: 'name'
         }).populate({
             path: 'user',
-            select: 'name email' // Populate user details
+            select: '_id' // Populate user details
         });
     } else {
         query = Review.find().populate({
