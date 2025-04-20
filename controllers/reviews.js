@@ -155,6 +155,8 @@ exports.getReview = async (req, res, next) => {
 exports.addReview = async (req, res, next) => {
     try {
 
+        console.log(req.body);
+
         if(!req.params.hotelId) {
             return res.status(400).json({
                 success: false,
