@@ -10,19 +10,19 @@ exports.getBookings = async(req, res, next) => {
     if(req.user.role !== 'admin') {
         query = Booking.find({user: req.user.id}).populate({
             path: 'hotel',
-            select: 'name address tel'
+            select: 'name description tel id picture'
         });
     } else {
         if(req.params.hotelId) {
             console.log(req.params.hotelId);
             query = Booking.find({ hotel: req.params.hotelId }).populate({
                 path: 'hotel',
-                select: 'name address tel'
+                select: 'name description tel id picture'
             });
         } else {
             query = Booking.find().populate({
                 path: 'hotel',
-                select: 'name address tel'
+                select: 'name description tel id picture'
             });
         }
     }
@@ -50,7 +50,7 @@ exports.getBooking = async (req, res, next) => {
     try {
         const booking = await Booking.findById(req.params.id).populate({
             path: 'hotel',
-            select: 'name description tel'
+            select: 'name description tel id picture'
         });
 
         if(!booking) {
@@ -86,15 +86,18 @@ exports.getBooking = async (req, res, next) => {
 //@access   Private
 exports.addBooking = async (req, res, next) => {
     try {
-        req.body.hotel = req.params.hotelId;
 
-        const hotel = await Hotel.findById(req.params.hotelId);
+        
+        const hotel = await Hotel.findOne({id: req.params.hotelId});
+        
         if(!hotel) {
             return res.status(404).json({
                 success: false,
                 message: `No hotel with the id of ${req.params.hotelId}`
             });
         }
+        
+        req.body.hotel = hotel._id
 
         // add user id to req.body
         req.body.user = req.user.id;

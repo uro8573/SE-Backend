@@ -1,5 +1,5 @@
 const express = require('express')
-const router = express.Router();
+const router = express.Router({mergeParams: true});
 const {getReviews, getReview, addReview, updateReview, deleteReview} = require("../controllers/reviews");
 const {protect, authorize} = require("../middleware/auth");
 

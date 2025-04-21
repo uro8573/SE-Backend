@@ -9,21 +9,42 @@ exports.getReviews = async (req, res, next) => {
     let query;
     
     if (req.params.hotelId) {
-        query = Review.find({ hotel: req.params.hotelId }).populate({
+
+        const find_hotel_by_id = await Hotel.findOne({id: req.params.hotelId});
+
+        if(!find_hotel_by_id) {
+            return res.status(404).json({
+                success: false,
+                message: `Can't find hotel with specify id ${req.params.hotelId}`
+            });
+        }
+
+        query = Review.find({ hotel: find_hotel_by_id._id }).populate({
             path: 'hotel',
-            select: 'name address tel'
+            select: 'name'
         }).populate({
             path: 'user',
-            select: 'name email' // Populate user details
+            select: '_id name' // Populate user details
         });
     } else {
-        query = Review.find().populate({
-            path: 'hotel',
-            select: 'name address tel'
-        }).populate({
-            path: 'user',
-            select: 'name email' // Populate user details
-        });
+
+        if (req.user.role !== "admin") {
+            query = Review.find({user : req.user.id}).populate({
+                path: 'hotel',
+                select: 'name address tel'
+            }).populate({
+                path: 'user',
+                select: 'name email'
+            });
+        } else {    
+            query = Review.find().populate({
+                path: 'hotel',
+                select: 'name address tel'
+            }).populate({
+                path: 'user',
+                select: 'name email'
+            });
+        }
     }
 
     try {
@@ -128,27 +149,32 @@ exports.getReview = async (req, res, next) => {
 }
 
 //@desc     Add Review
-//@route    POST /api/v1/reviews
+//@route    POST /api/v1/hotels/:hotelId/reviews
 //@access   Private
 
 exports.addReview = async (req, res, next) => {
     try {
 
-        if(!req.body.hotel) {
+        console.log(req.body);
+
+        if(!req.params.hotelId) {
             return res.status(400).json({
                 success: false,
-                message: `Must specify hotelId in body before sending request to this route.`
+                message: `Must specify hotelId in params before sending request to this route.`
             });
         }
 
-        const hotel = await Hotel.findById(req.body.hotel);
-
+        
+        const hotel = await Hotel.findOne({id: req.params.hotelId});
+        
         if(!hotel) {
             return res.status(404).json({
                 success: false,
-                message: `No hotel with the id of ${req.body.hotel}`
+                message: `No hotel with the id of ${req.params.hotelId}`
             });
         }
+
+        req.body.hotel = hotel._id;
 
         // Check if user can be able to review or not.
 
