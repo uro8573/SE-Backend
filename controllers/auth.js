@@ -1,4 +1,38 @@
 const User = require("../models/User");
+const dotenv = require("dotenv");
+
+
+//Load env vars
+dotenv.config({path:"./config/config.env"});
+
+/* Email Service Provider */
+
+const nodemailer = require('nodemailer');
+
+let configOptions = {
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.TRANSPORTER_EMAIL,
+        pass: process.env.TRANSPORTER_PASS
+    }
+}
+const transporter = nodemailer.createTransport(configOptions);
+/* ---------------------- */
+
+/* Otp generator */
+
+function generateOTP(){
+    const digits = '0123456789';
+    let otp = '';
+    for (let i = 0; i < 6; i++) {
+      otp += digits[Math.floor(Math.random() * 10)];
+    }
+    return otp;
+  }
+
+/*-------------------------- */
 
 //@desc     Register user
 //@route    POST /api/v1/auth/register
@@ -6,17 +40,27 @@ const User = require("../models/User");
 exports.register = async (req,res,next) => {
     try {
         const {name, email, password, role, tel} = req.body;
-
-        //Create user
-        const user = await User.create({
-            name,
-            email,
-            password,
-            role,
-            tel
+        console.log(email);
+        const otp = generateOTP();
+        transporter.sendMail({
+            to: "porkuang2548@gmail.com",
+            subject: "Your verify otp is" ,
+            html: `<h1>${otp}</h1>`
+        }).then((res) => {
+            console.log(res.response);
+        }).catch(err => {
+            console.error(err);
         });
 
-        sendTokenResponse(user, 200, res);
+        //Create user
+        // const user = await User.create({
+        //     name,
+        //     email,
+        //     password,
+        //     role,
+        //     tel
+        // });
+        // sendTokenResponse(user, 200, res);
 
     } catch(err) {
         res.status(400).json({success:false});
