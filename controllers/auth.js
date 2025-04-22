@@ -40,10 +40,9 @@ function generateOTP(){
 exports.register = async (req,res,next) => {
     try {
         const {name, email, password, role, tel} = req.body;
-        console.log(email);
         const otp = generateOTP();
         transporter.sendMail({
-            to: "porkuang2548@gmail.com",
+            to: email,
             subject: "Your verify otp is" ,
             html: `<h1>${otp}</h1>`
         }).then((res) => {
