@@ -17,6 +17,23 @@ app.use(express.json());
 //Load env vars
 dotenv.config({path:"./config/config.env"});
 
+/* Email Service Provider */
+
+const nodemailer = require('nodemailer');
+
+let configOptions = {
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.TRANSPORTER_EMAIL,
+        pass: process.env.TRANSPORTER_PASS
+    }
+}
+const transporter = nodemailer.createTransport(configOptions);
+
+/* ---------------------- */
+
 //Connect to database
 connectDB();
 
