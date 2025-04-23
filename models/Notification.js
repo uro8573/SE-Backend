@@ -19,6 +19,9 @@ const NotificationSchema = new mongoose.Schema({
         enum: ['info', 'warn', 'success', 'fail'],
         default: 'info'
     },
+    typeAction: {
+        type: String,
+    },
     createdAt: {
         type: Date,
         default: Date.now
