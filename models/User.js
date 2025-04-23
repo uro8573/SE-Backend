@@ -31,8 +31,14 @@ const UserSchema = new mongoose.Schema({
         minlength: 6,
         select: false
     },
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
+    verificationCode: {
+        type: String,
+        required: [true, 'User need to has verification code(OTP)']
+    },
+    isVerify: {
+        type: Boolean,
+        default: false,
+    },
     createdAt: {
         type: Date,
         default: Date.now
