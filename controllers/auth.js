@@ -1,6 +1,5 @@
 const User = require("../models/User");
-const { sendMail } = require('./email');
-const moment = require("moment");
+const { sendVerifyOTP } = require('./email');
 
 //@desc     Register user
 //@route    POST /api/v1/auth/register
@@ -22,28 +21,6 @@ exports.register = async (req,res,next) => {
 
         const otp = generateOTP();
 
-        const emailBody = `
-            <div style="font-family: Arial, sans-serif; background: #ffffff; text-align: center; padding: 40px 20px; color: #000;">
-                <div style="width: 100px; height: 100px; background: #ccc; border-radius: 50%; margin: 0 auto 20px auto;"></div>
-                <div style="font-size: 20px; margin-bottom: 20px; font-weight: bold;">Your Signup Verification Code</div>
-                <div style="font-size: 24px; font-weight: bold; letter-spacing: 20px;">${otp}</div>
-                <div style="margin-top: 10px; font-size: 14px;">Don't share this code to anyone!</div>
-
-                <div style="background: #f9f6e6; padding: 15px; border-radius: 10px; display: inline-block; text-align: left; margin: 20px 0;">
-                    <div style="font-weight: bold;">⚠️ Didn't request this code yourself?</div>
-                    <div>This code was generated from a device or browser on <b>${moment().format("DD/MM/YYYY")}</b>. If you did not initiate this request, you can safely <b>ignore this email.</b></div>
-                </div>
-
-                <div style="font-size: 12px; color: #555;">This is an automated message. <b>Please do not reply.</b></div>
-
-                <div style="margin-top: 20px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png" alt="Google" style="width: 32px; height: 32px; margin: 0 10px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" style="width: 32px; height: 32px; margin: 0 10px;">
-                    <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/4/4f/Discord_Logo_sans_texte.svg/1818px-Discord_Logo_sans_texte.svg.png" alt="Discord" style="width: 32px; height: 32px; margin: 0 10px;">
-                </div>
-            </div>
-        `
-
         
         /*-------------------------- */
         
@@ -58,7 +35,7 @@ exports.register = async (req,res,next) => {
         });
         await sendTokenResponse(user, 200, res);
 
-        await sendMail("TungTee888", email, "[TungTee888] Your email verification code.", emailBody);
+        await sendVerifyOTP(email, otp);
 
     } catch(err) {
         res.status(400).json({success:false});
@@ -136,4 +113,106 @@ exports.logout = async(req, res, next) => {
         success: true,
         data: {}
     });
+}
+
+//@desc     Verify OTP by user
+//@route    GET /api/v1/auth/verify
+//@access   Private
+exports.verify = async(req, res, next) => {
+    
+    try {
+    
+        const user = await User.findById(req.user.id);
+    
+        if(user.isVerify) {
+            return res.status(409).json({
+                success: false,
+                message: "This account is already verified."
+            });
+        }
+
+        const { verificationCode } = req.body;
+
+        if(!verificationCode) {
+            return res.status(400).json({
+                success: false,
+                message: "You must send 'verificationCode' body into this route."
+            });
+        }
+
+        if(verificationCode != user.verificationCode) {
+            return res.status(403).json({
+                success: false,
+                message: "Your OTP code is wrong or invalid."
+            });
+        }
+
+        await User.updateOne(user, {
+            isVerify: true
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Verify Successful!"
+        });
+
+    } catch(err) {
+        res.status(400).json({
+            success: false
+        });
+        console.log(err.stack);
+    }
+
+}
+
+//@desc     Re-sending OTP code to user
+//@route    GET /api/v1/auth/re-verify
+//@access   Private
+exports.reVerify = async(req, res, next) => {
+
+    try {
+    
+        const user = await User.findById(req.user.id);
+    
+        if(user.isVerify) {
+            return res.status(409).json({
+                success: false,
+                message: "This account is already verified."
+            });
+        }
+
+        /* Otp generator */
+
+        const generateOTP = () => {
+            const digits = '0123456789';
+            let otp = '';
+            for (let i = 0; i < 6; i++) {
+                otp += digits[Math.floor(Math.random() * 10)];
+            }
+            return otp;
+        };
+
+        const otp = generateOTP();
+
+        
+        /*-------------------------- */
+
+        await User.updateOne(user, {
+            verificationCode: otp
+        });
+
+        await sendVerifyOTP(user.email, otp);
+
+        res.status(200).json({
+            success: true,
+            message: "Re-sending OTP Successful!"
+        });
+
+    } catch(err) {
+        res.status(400).json({
+            success: false
+        });
+        console.log(err.stack);
+    }
+
 }
