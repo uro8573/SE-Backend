@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const { sendVerifyOTP } = require('./email');
 
 //@desc     Register user
 //@route    POST /api/v1/auth/register
@@ -7,16 +8,34 @@ exports.register = async (req,res,next) => {
     try {
         const {name, email, password, role, tel} = req.body;
 
-        //Create user
+        /* Otp generator */
+
+        const generateOTP = () => {
+            const digits = '0123456789';
+            let otp = '';
+            for (let i = 0; i < 6; i++) {
+                otp += digits[Math.floor(Math.random() * 10)];
+            }
+            return otp;
+        };
+
+        const otp = generateOTP();
+
+        
+        /*-------------------------- */
+        
+        // Create user
         const user = await User.create({
             name,
             email,
             password,
             role,
-            tel
+            tel,
+            verificationCode: otp,
         });
+        await sendTokenResponse(user, 200, res);
 
-        sendTokenResponse(user, 200, res);
+        await sendVerifyOTP(email, otp);
 
     } catch(err) {
         res.status(400).json({success:false});
@@ -94,4 +113,106 @@ exports.logout = async(req, res, next) => {
         success: true,
         data: {}
     });
+}
+
+//@desc     Verify OTP by user
+//@route    GET /api/v1/auth/verify
+//@access   Private
+exports.verify = async(req, res, next) => {
+    
+    try {
+    
+        const user = await User.findById(req.user.id);
+    
+        if(user.isVerify) {
+            return res.status(409).json({
+                success: false,
+                message: "This account is already verified."
+            });
+        }
+
+        const { verificationCode } = req.body;
+
+        if(!verificationCode) {
+            return res.status(400).json({
+                success: false,
+                message: "You must send 'verificationCode' body into this route."
+            });
+        }
+
+        if(verificationCode != user.verificationCode) {
+            return res.status(403).json({
+                success: false,
+                message: "Your OTP code is wrong or invalid."
+            });
+        }
+
+        await User.updateOne(user, {
+            isVerify: true
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Verify Successful!"
+        });
+
+    } catch(err) {
+        res.status(400).json({
+            success: false
+        });
+        console.log(err.stack);
+    }
+
+}
+
+//@desc     Re-sending OTP code to user
+//@route    GET /api/v1/auth/re-verify
+//@access   Private
+exports.reVerify = async(req, res, next) => {
+
+    try {
+    
+        const user = await User.findById(req.user.id);
+    
+        if(user.isVerify) {
+            return res.status(409).json({
+                success: false,
+                message: "This account is already verified."
+            });
+        }
+
+        /* Otp generator */
+
+        const generateOTP = () => {
+            const digits = '0123456789';
+            let otp = '';
+            for (let i = 0; i < 6; i++) {
+                otp += digits[Math.floor(Math.random() * 10)];
+            }
+            return otp;
+        };
+
+        const otp = generateOTP();
+
+        
+        /*-------------------------- */
+
+        await User.updateOne(user, {
+            verificationCode: otp
+        });
+
+        await sendVerifyOTP(user.email, otp);
+
+        res.status(200).json({
+            success: true,
+            message: "Re-sending OTP Successful!"
+        });
+
+    } catch(err) {
+        res.status(400).json({
+            success: false
+        });
+        console.log(err.stack);
+    }
+
 }
