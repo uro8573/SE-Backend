@@ -9,7 +9,7 @@ router.post('/register', register);
 router.post('/login', login);
 router.get('/me', protect, getMe);
 router.get('/logout', protect, logout);
-router.get('/verify', protect, verify);
-router.get('/re-verify', reVerify);
+router.post('/verify', protect, verify);
+router.post('/re-verify', reVerify);
 
 module.exports = router;
