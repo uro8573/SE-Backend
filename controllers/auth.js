@@ -216,3 +216,53 @@ exports.reVerify = async(req, res, next) => {
     }
 
 }
+
+//@desc     Verify Booking
+//@route    GET /api/v1/auth/verifyBooking
+//@access   Private
+exports.verifyBooking = async(req, res, next) => {
+    
+    try {
+    
+        const booking = await Booking.findById(req.booking.id);
+    
+        if(booking.isVerify) {
+            return res.status(409).json({
+                success: false,
+                message: "This booking is already verified."
+            });
+        }
+
+        const { verificationCode } = req.body;
+
+        if(!verificationCode) {
+            return res.status(400).json({
+                success: false,
+                message: "You must send 'verificationCode' body into this route."
+            });
+        }
+
+        if(verificationCode != user.verificationCode) {
+            return res.status(403).json({
+                success: false,
+                message: "Your OTP code is wrong or invalid."
+            });
+        }
+
+        await User.updateOne(user, {
+            isVerify: true
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Verify Successful!"
+        });
+
+    } catch(err) {
+        res.status(400).json({
+            success: false
+        });
+        console.log(err.stack);
+    }
+
+}

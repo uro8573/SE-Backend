@@ -21,11 +21,18 @@ const BookingSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "User",
         required: true
-    }, 
+    },
     hotel: {
         type: mongoose.Schema.ObjectId,
         ref: "Hotel",
         required: true
+    },
+    isConfirmed: { 
+        type: Boolean,
+        default: false,
+    },
+    confirmationToken: { 
+        type: String,
     },
     createdAt: {
         type: Date,
