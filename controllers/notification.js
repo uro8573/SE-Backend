@@ -5,7 +5,7 @@ const Notification = require('../models/Notification');
 //@route    GET /api/v1/notifications
 //@access   Public
 
-expeorts.getNotifications = async (req, res, next) => {
+exports.getNotifications = async (req, res, next) => {
     let query;
 
     if(req.user.role !== 'admin') {
@@ -36,7 +36,7 @@ expeorts.getNotifications = async (req, res, next) => {
 //@route    GET /api/v1/notifications/:id
 //@access   Public
 
-expeorts.getNotification = async (req, res, next) => {
+exports.getNotification = async (req, res, next) => {
     try {
             const noti = await Notification.findById(req.params.id)
 
@@ -56,7 +56,7 @@ expeorts.getNotification = async (req, res, next) => {
 
             res.status(200).json({
                 success: true,
-                data: booking
+                data: noti
             });
     
         } catch(error) {
@@ -85,7 +85,7 @@ exports.addNotification = async (req, res, next) => {
         const noti = await Notification.create(req.body);
         res.status(201).json({
             success : true,
-            data: booking
+            data: noti
         })
 
     } catch (err) {
