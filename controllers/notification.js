@@ -133,3 +133,32 @@ exports.deleteNotification = async (req, res, next) => {
         res.status('Cannot delete notification');
     }
 }
+
+//@desc     Delete notification
+//@route    DELETE /api/v1/notifications/:id
+//@access   Private
+exports.updateNotification = async (req , res ,next) => {
+    try{
+        let noti = await Notification.findById(req.params.id);
+        if(!noti){
+            return res.status(404).json({
+                success: false,
+                message: `No notification with the id of ${req.params.id}`
+            });
+        }
+        noti = await Notification.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        });
+        res.status(200).json({
+            success: true,
+            data: Notification
+        });
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Cannot update notification"
+        });
+}
+}
