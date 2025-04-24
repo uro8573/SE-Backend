@@ -170,3 +170,32 @@ exports.updateNotification = async (req , res ,next) => {
         });
 }
 }
+
+// @desc     Manually delete old notifications
+// @route    DELETE /api/v1/notifications/cleanup/:days
+// @access   Private (admin only)
+
+exports.cleanupNotifications = async (req, res) => {
+    const days = parseInt(req.params.days) || 30;
+  
+    if (req.user.role !== 'admin') {
+      return res.status(401).json({ success: false, message: "Not authorized" });
+    }
+  
+    try {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - days);
+  
+      const result = await Notification.deleteMany({ createdAt: { $lt: cutoff } });
+  
+      res.status(200).json({
+        success: true,
+        deleted: result.deletedCount,
+        message: `Deleted ${result.deletedCount} notifications older than ${days} days`
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: "Failed to delete old notifications" });
+    }
+  };
+  
