@@ -73,12 +73,15 @@ exports.getNotification = async (req, res, next) => {
 //@access   Private
 
 exports.addNotification = async (req, res, next) => {
+    
     if (req.user.role !== 'admin') {
         return res.status(401).json({
             success : false,
             msg : `User ${req.user.role} is not authorize to use add notification`
         })
     }
+
+    if(!req.body.user) req.body.user = req.user.id;
 
     try {
 
