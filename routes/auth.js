@@ -10,6 +10,6 @@ router.post('/login', login);
 router.get('/me', protect, getMe);
 router.get('/logout', protect, logout);
 router.post('/verify', protect, verify);
-router.post('/re-verify', reVerify);
+router.get('/re-verify', protect, reVerify);
 
 module.exports = router;
