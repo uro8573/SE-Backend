@@ -160,7 +160,7 @@ exports.updateNotification = async (req , res ,next) => {
         });
         res.status(200).json({
             success: true,
-            data: Notification
+            data: noti
         });
     } catch(error) {
         console.log(error);
