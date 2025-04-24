@@ -73,12 +73,15 @@ exports.getNotification = async (req, res, next) => {
 //@access   Private
 
 exports.addNotification = async (req, res, next) => {
+    
     if (req.user.role !== 'admin') {
         return res.status(401).json({
             success : false,
             msg : `User ${req.user.role} is not authorize to use add notification`
         })
     }
+
+    if(!req.body.user) req.body.user = req.user.id;
 
     try {
 
@@ -133,3 +136,66 @@ exports.deleteNotification = async (req, res, next) => {
         res.status('Cannot delete notification');
     }
 }
+
+//@desc     Update notification
+//@route    PUT /api/v1/notifications/:id
+//@access   Private
+exports.updateNotification = async (req , res ,next) => {
+    try{
+        let noti = await Notification.findById(req.params.id);
+        if(!noti){
+            return res.status(404).json({
+                success: false,
+                message: `No notification with the id of ${req.params.id}`
+            });
+        }
+
+        const isRead = req.body.isRead ? false : req.body.isRead; // Check body isRead is valid.
+
+        if(req.user.role !== 'admin') req.body = { isRead }
+
+        noti = await Notification.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        });
+        res.status(200).json({
+            success: true,
+            data: noti
+        });
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Cannot update notification"
+        });
+}
+}
+
+// @desc     Manually delete old notifications
+// @route    DELETE /api/v1/notifications/cleanup/:days
+// @access   Private (admin only)
+
+exports.cleanupNotifications = async (req, res) => {
+    const days = parseInt(req.params.days) || 30;
+  
+    if (req.user.role !== 'admin') {
+      return res.status(401).json({ success: false, message: "Not authorized" });
+    }
+  
+    try {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - days);
+  
+      const result = await Notification.deleteMany({ createdAt: { $lt: cutoff } });
+  
+      res.status(200).json({
+        success: true,
+        deleted: result.deletedCount,
+        message: `Deleted ${result.deletedCount} notifications older than ${days} days`
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: "Failed to delete old notifications" });
+    }
+  };
+  
