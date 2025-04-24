@@ -149,6 +149,11 @@ exports.updateNotification = async (req , res ,next) => {
                 message: `No notification with the id of ${req.params.id}`
             });
         }
+
+        const isRead = req.body.isRead ? false : req.body.isRead; // Check body isRead is valid.
+
+        if(req.user.role !== 'admin') req.body = { isRead }
+
         noti = await Notification.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
