@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.route('/').get(protect, getNotifications).post(protect, addNotification)
 router.route('/:id').get(protect, getNotification).delete(protect, deleteNotification).put(protect, updateNotification)
-router.route('/cleanup/:id').delete(protect, cleanupNotifications)
+router.route('/cleanup/:days').delete(protect, cleanupNotifications)
 
 module.exports = router;
