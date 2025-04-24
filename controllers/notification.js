@@ -137,8 +137,8 @@ exports.deleteNotification = async (req, res, next) => {
     }
 }
 
-//@desc     Delete notification
-//@route    DELETE /api/v1/notifications/:id
+//@desc     Update notification
+//@route    PUT /api/v1/notifications/:id
 //@access   Private
 exports.updateNotification = async (req , res ,next) => {
     try{
