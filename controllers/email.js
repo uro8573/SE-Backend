@@ -1,7 +1,7 @@
-//Load env vars
+// Load env vars
 const dotenv = require('dotenv');
 const moment = require("moment");
-dotenv.config({path:"./config/config.env"});
+dotenv.config({ path: "./config/config.env" });
 
 /* Email Service Provider */
 
@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport(configOptions);
 exports.sendMail = async (sender, sendTo, subject, html) => {
 
     transporter.sendMail({
-        sender: sender,
+        from: sender,
         to: sendTo,
         subject: subject,
         html: html
@@ -57,6 +57,22 @@ exports.sendVerifyOTP = async (sendTo, otp) => {
                 <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/4/4f/Discord_Logo_sans_texte.svg/1818px-Discord_Logo_sans_texte.svg.png" alt="Discord" style="width: 32px; height: 32px; margin: 0 10px;">
             </div>
         </div>
-    `
+    `;
     this.sendMail("TungTee888", sendTo, "[TungTee888] Your email verification code.", emailBody);
 }
+
+exports.sendBookingConfirmation = async (sendTo, confirmationUrl) => {
+    const emailBody = `
+        <div style="font-family: Arial, sans-serif; background: #f4f4f4; color: #333; padding: 20px; text-align: center;">
+            <div style="background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                <h2 style="color: #007bff; margin-bottom: 20px;">ยืนยันการจองของคุณ</h2>
+                <p style="font-size: 16px; margin-bottom: 20px;">ขอขอบคุณสำหรับการจองของคุณ! โปรดยืนยันการจองโดยคลิกที่ปุ่มด้านล่าง:</p>
+                <a href="${confirmationUrl}" style="display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                    ยืนยันการจอง
+                </a>
+                <p style="font-size: 12px; color: #777;">นี่คืออีเมลอัตโนมัติ กรุณาอย่าตอบกลับ</p>
+            </div>
+        </div>
+    `;
+    this.sendMail("TungTee888 Bookings", sendTo, "[TungTee888 Bookings] กรุณายืนยันการจองของคุณ", emailBody);
+};
