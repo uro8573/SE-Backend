@@ -28,6 +28,13 @@ exports.getReviews = async (req, res, next) => {
         });
     } else {
 
+        if(!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: `You need to authorize to access this route.`
+            });
+        }
+
         if (req.user.role !== "admin") {
             query = Review.find({user : req.user.id}).populate({
                 path: 'hotel',
