@@ -28,6 +28,8 @@ exports.getReviews = async (req, res, next) => {
         });
     } else {
 
+        console.log(req.user.id);
+
         if(!req.user) {
             return res.status(401).json({
                 success: false,
