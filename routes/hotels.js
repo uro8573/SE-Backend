@@ -193,7 +193,7 @@ module.exports=router;
  *               schema:
  *                  $ref: '#/components/schemas/Hotel'
  *    responses:
- *       201:
+ *       200:
  *         description: The hotel was updated
  *         content:
  *          application/json:
