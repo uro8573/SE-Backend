@@ -2,7 +2,12 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
-const cors = require("cors");
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const { xss } = require('express-xss-sanitizer');
+const rateLimit = require("express-rate-limit");
+const hpp = require('hpp');
+const cors = require('cors');
 
 const { CronJob } = require("cron");
 const deleteOldNotifications = require('./utils/autoDeleteNotifications');
@@ -18,6 +23,31 @@ const notification = require("./routes/notification")
 const app = express();
 app.use(express.json());
 
+// Set security headers
+app.use(helmet());
+
+// Sanitize date
+app.use(mongoSanitize());
+
+// Prevent XSS attacks
+app.use(xss());
+
+// Prevent http param pollutions
+app.use(hpp());
+
+// Prevent request that not from origin
+app.use(cors({
+    origin: "*",
+    credentials : false
+}));
+
+// Rate Limiting
+const limiter = rateLimit({
+    windowsMs: 10*60*1000, // 10 minutes
+    max: 1000
+});
+app.use(limiter);
+
 //Load env vars
 dotenv.config({path:"./config/config.env"});
 
@@ -27,10 +57,6 @@ connectDB();
 //Cookie Parser
 app.use(cookieParser());
 
-app.use(cors({
-    origin: "*",
-    credentials : false
-}));
 
 app.use("/api/v1/hotels", hotels);
 app.use("/api/v1/auth", auth);
