@@ -5,23 +5,34 @@ dotenv.config({ path: "./config/config.env" });
 
 /* Email Service Provider */
 
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const configOptions = {
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.TRANSPORTER_EMAIL,
+        pass: process.env.TRANSPORTER_PASS
+    },
+}
+
+const transporter = nodemailer.createTransport(configOptions);
 
 /* ---------------------- */
 
 exports.sendMail = async (sender, sendTo, subject, html) => {
 
-    const { data, error } = await resend.emails.send({
-        from: sender,
+    transporter.sendMail({
+        sender: sender,
         to: sendTo,
         subject: subject,
         html: html
+    }).then((res) => {
+        console.log(res.response);
+    }).catch((err) => {
+        console.error(err.stack);
     });
-
-    if(error) console.error({error});
-    else console.log({ data });
 
 }
 
@@ -48,7 +59,7 @@ exports.sendVerifyOTP = async (sendTo, otp) => {
             </div>
         </div>
     `;
-    this.sendMail("TungTee888", sendTo, "[TungTee888] Your email verification code.", emailBody);
+    this.sendMail('"TungTee888" <tungtee888@gmail.com>', sendTo, "[TungTee888] Your email verification code.", emailBody);
 }
 
 exports.sendBookingConfirmation = async (sendTo, confirmationUrl) => {
@@ -90,5 +101,5 @@ exports.sendBookingConfirmation = async (sendTo, confirmationUrl) => {
         </div>
     </div>
     `;
-    this.sendMail("TungTee888 Bookings", sendTo, "[TungTee888 Bookings] กรุณายืนยันการจองของคุณ", emailBody);
+    this.sendMail('"TungTee888" <tungtee888@gmail.com>', sendTo, "[TungTee888 Bookings] กรุณายืนยันการจองของคุณ", emailBody);
 };
