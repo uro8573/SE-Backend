@@ -38,7 +38,7 @@ exports.getBookings = async(req, res, next) => {
         });
     } catch(error) {
         console.log(error);
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message: "Cannot find Booking"
         });
@@ -125,7 +125,7 @@ exports.addBooking = async (req, res, next) => {
         try {
             await sendEmail.sendBookingConfirmation(req.user.email, confirmationUrl);
 
-            res.status(200).json({
+            res.status(201).json({
                 success: true,
                 message: "ระบบได้ส่งอีเมลยืนยันการจองไปยังอีเมลของคุณแล้ว กรุณาตรวจสอบอีเมลและคลิกลิงก์เพื่อยืนยัน",
                 data: booking,
@@ -134,7 +134,7 @@ exports.addBooking = async (req, res, next) => {
             console.error("Error sending email:", err);
             // หากส่งอีเมลไม่สำเร็จ อาจจะต้องลบ booking ที่สร้างไปแล้ว
             await Booking.findByIdAndDelete(booking._id);
-            return res.status(500).json({
+            return res.status(400).json({
                 success: false,
                 message: "ไม่สามารถส่งอีเมลยืนยันการจองได้ กรุณาลองใหม่อีกครั้ง",
             });
