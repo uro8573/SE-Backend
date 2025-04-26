@@ -77,7 +77,13 @@ const swaggerOptions = {
             title: "TungTee888 API Library",
             version: '1.0',
             description: 'Simple Express TungTee888 API'
-        }
+        },
+        servers: [
+            {
+                url: `${process.env.HOST}:${process.env.PORT}/api/v1`,
+                description: 'Base path for all APIs'
+            }
+        ]
     },
     apis: ['./routes/*.js']
 }
