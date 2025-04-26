@@ -112,6 +112,8 @@ module.exports = router;
  * @swagger
  * /bookings/{id}:
  *    get:
+ *      security:
+ *         - bearerAuth: []
  *      summary: Get the booking by id
  *      tags: [Bookings]
  *      parameters:
