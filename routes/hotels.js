@@ -117,54 +117,54 @@ module.exports=router;
  *              schema:
  *                type: array
  *                items:
- *                  $ref: '#/models/Hotel'
+ *                  $ref: '#/components/schemas/Hotel'
 */
 
 /**
  * @swagger
- * /hospitals/{id}:
+ * /hotels/{id}:
  *    get:
- *      summary: Get the hospital by id
- *      tags: [Hospitals]
+ *      summary: Get the hotel by id
+ *      tags: [Hotels]
  *      parameters:
  *        - in: path
  *          name: id
  *          schema:
  *          type: string
  *          required: true
- *          description: The hospital id
+ *          description: The hotel id
  *      responses:
  *        200:
- *          description: The hospital description by id
+ *          description: The hotel description by id
  *          content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Hospital'
- *        404:
- *          description: The hospital was not found
+ *               $ref: '#/components/schemas/Hotel'
+ *        400:
+ *          description: The hotel id was not found
 */
 
 /**
  * @swagger
- * /hospitals:
+ * /hotels:
  *    post:
- *      summary: Create a new hospital
- *      tags: [Hospitals]
+ *      summary: Create a new hotel
+ *      tags: [Hotels]
  *      requestBody:
  *        required: true
  *        content:
  *          application/json:
  *           schema:
- *           $ref: '#/components/schemas/Hospital'
+ *           $ref: '#/components/schemas/Hotel'
  *      responses:
  *        201:
- *        description: The hospital was successfully created
- *        content:
- *          application/json:
- *          schema:
- *            $ref: '#/components/schemas/Hospital'
- *      500:
- *        description: Some server error
+ *          description: The hotel was successfully created
+ *          content:
+ *           application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Hotel'
+ *        401:
+ *          description: Unauthorized
  */
 
 /**
