@@ -1,6 +1,12 @@
 const Review = require ('../models/Review');
 const Hotel = require("../models/Hotel");
 const Booking = require("../models/Booking");
+const dotenv = require("dotenv");
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+//Load env vars
+dotenv.config({path:"./config/config.env"});
 
 // @desc     Get reviews for each hotel along with related info
 // @route    GET /api/v1/hotels/:hotelId/reviews
@@ -27,6 +33,31 @@ exports.getReviews = async (req, res, next) => {
             select: '_id name' // Populate user details
         });
     } else {
+
+        let token;
+        if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+
+        // Make sure token exists
+        if(!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Not authorize to access this route"
+            });
+        }
+
+        try {
+            // Verify token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            req.user = await User.findById(decoded.id);
+        } catch(err) {
+            console.log(err.stack);
+            return res.status(401).json({
+                success: false,
+                message: "Not authorize to access this route"
+            });
+        }
 
         if (req.user.role !== "admin") {
             query = Review.find({user : req.user.id}).populate({
@@ -108,8 +139,9 @@ exports.userReview = async (req, res, next) => {
 // @access   Public
 
 exports.getReview = async (req, res, next) => {
+
     try {
-        const review = await Review.findById(req.params.reviewId)
+        const review = await Review.findById(req.params.id)
             .populate({
                 path: 'hotel',
                 select: 'name description tel address' // Populate hotel details
@@ -122,7 +154,7 @@ exports.getReview = async (req, res, next) => {
         if (!review) {
             return res.status(404).json({
                 success: false,
-                message: `No review with the id of ${req.params.reviewId}`
+                message: `No review with the id of ${req.params.id}`
             });
         }
 

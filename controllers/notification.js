@@ -9,9 +9,15 @@ exports.getNotifications = async (req, res, next) => {
     let query;
 
     if(req.user.role !== 'admin') {
-        query = Notification.find({user : req.user.id})
+        query = Notification.find({user : req.user.id}).populate({
+            path: 'user',
+            select: 'name email'
+        });
     } else {
-        query = Notification.find()
+        query = Notification.find().populate({
+            path: 'user',
+            select: 'name email'
+        });
     }
 
     try {
@@ -93,7 +99,7 @@ exports.addNotification = async (req, res, next) => {
 
     } catch (err) {
         console.error('Cannot create notification' , err);
-        res.status(500).json({
+        res.status(400).json({
             success:'false',
             msg:'Cannot Create notification'
         })
@@ -150,7 +156,7 @@ exports.updateNotification = async (req , res ,next) => {
             });
         }
 
-        const isRead = req.body.isRead ? false : req.body.isRead; // Check body isRead is valid.
+        const isRead = typeof req.body.isRead === 'boolean' ? req.body.isRead : false;
 
         if(req.user.role !== 'admin') req.body = { isRead }
 
