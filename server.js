@@ -39,6 +39,28 @@ app.use("/api/v1/reviews", reviews);
 app.use("/api/v1/user", user);
 app.use("/api/v1/notifications", notification);
 
+// ------ Swagger ------ //
+
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: "TungTee888 API Library",
+            version: '1.0',
+            description: 'Simple Express TungTee888 API'
+        }
+    },
+    apis: ['./routes/*.js']
+}
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+
+/* -------------------- */
+
 app.get("/", (req, res) => {
     res.status(200).json({success: true, data:{id:1}});
 });
