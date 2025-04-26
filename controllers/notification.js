@@ -156,7 +156,7 @@ exports.updateNotification = async (req , res ,next) => {
             });
         }
 
-        const isRead = req.body.isRead ? false : req.body.isRead; // Check body isRead is valid.
+        const isRead = typeof req.body.isRead === 'boolean' ? req.body.isRead : false;
 
         if(req.user.role !== 'admin') req.body = { isRead }
 
