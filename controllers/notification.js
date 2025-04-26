@@ -99,7 +99,7 @@ exports.addNotification = async (req, res, next) => {
 
     } catch (err) {
         console.error('Cannot create notification' , err);
-        res.status(500).json({
+        res.status(400).json({
             success:'false',
             msg:'Cannot Create notification'
         })

@@ -139,8 +139,9 @@ exports.userReview = async (req, res, next) => {
 // @access   Public
 
 exports.getReview = async (req, res, next) => {
+
     try {
-        const review = await Review.findById(req.params.reviewId)
+        const review = await Review.findById(req.params.id)
             .populate({
                 path: 'hotel',
                 select: 'name description tel address' // Populate hotel details
@@ -153,7 +154,7 @@ exports.getReview = async (req, res, next) => {
         if (!review) {
             return res.status(404).json({
                 success: false,
-                message: `No review with the id of ${req.params.reviewId}`
+                message: `No review with the id of ${req.params.id}`
             });
         }
 
