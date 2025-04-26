@@ -5,33 +5,23 @@ dotenv.config({ path: "./config/config.env" });
 
 /* Email Service Provider */
 
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-let configOptions = {
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.TRANSPORTER_EMAIL,
-        pass: process.env.TRANSPORTER_PASS
-    }
-}
-const transporter = nodemailer.createTransport(configOptions);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /* ---------------------- */
 
 exports.sendMail = async (sender, sendTo, subject, html) => {
 
-    transporter.sendMail({
+    const { data, error } = await resend.emails.send({
         from: sender,
         to: sendTo,
         subject: subject,
         html: html
-    }).then((res) => {
-        console.log(res.response);
-    }).catch(err => {
-        console.error(err);
     });
+
+    if(error) console.error({error});
+    else console.log({ data });
 
 }
 
@@ -63,16 +53,42 @@ exports.sendVerifyOTP = async (sendTo, otp) => {
 
 exports.sendBookingConfirmation = async (sendTo, confirmationUrl) => {
     const emailBody = `
-        <div style="font-family: Arial, sans-serif; background: #f4f4f4; color: #333; padding: 20px; text-align: center;">
-            <div style="background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                <h2 style="color: #007bff; margin-bottom: 20px;">ยืนยันการจองของคุณ</h2>
-                <p style="font-size: 16px; margin-bottom: 20px;">ขอขอบคุณสำหรับการจองของคุณ! โปรดยืนยันการจองโดยคลิกที่ปุ่มด้านล่าง:</p>
-                <a href="${confirmationUrl}" style="display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
-                    ยืนยันการจอง
-                </a>
-                <p style="font-size: 12px; color: #777;">นี่คืออีเมลอัตโนมัติ กรุณาอย่าตอบกลับ</p>
-            </div>
+        <div style="font-family: Arial, sans-serif; background: #ffffff; text-align: center; padding: 40px 20px; color: #000;">
+        <!-- Icon placeholder -->
+        <div style="width: 100px; height: 100px; background: #ccc; border-radius: 50%; margin: 0 auto 20px auto;"></div>
+
+        <!-- Title -->
+        <div style="font-size: 20px; margin-bottom: 20px; font-weight: bold;">Confirm Your Reservation</div>
+
+        <!-- Message -->
+        <div style="font-size: 16px; margin-bottom: 30px;">
+            Thank you for your reservation! Please confirm your booking by clicking the button below.
         </div>
+
+        <!-- Confirmation Button (Centered) -->
+        <div style="margin: 30px 0;">
+            <a href="${confirmationUrl}" style="display: inline-block; background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+            Confirm Reservation
+            </a>
+        </div>
+  
+
+        <!-- Warning box -->
+        <div style="background: #f9f6e6; padding: 15px; border-radius: 10px; display: inline-block; text-align: left; margin: 30px 0;">
+            <div style="font-weight: bold;">⚠️ Didn't make this reservation?</div>
+            <div>This request was generated from a device or browser on <b>${moment().format("DD/MM/YYYY")}</b>. If you did not initiate this request, you can safely <b>ignore this email.</b></div>
+        </div>
+
+        <!-- Footer note -->
+        <div style="font-size: 12px; color: #555;">This is an automated message. <b>Please do not reply.</b></div>
+
+        <!-- Social Icons -->
+        <div style="margin-top: 20px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png" alt="Google" style="width: 32px; height: 32px; margin: 0 10px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" style="width: 32px; height: 32px; margin: 0 10px;">
+            <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/4/4f/Discord_Logo_sans_texte.svg/1818px-Discord_Logo_sans_texte.svg.png" alt="Discord" style="width: 32px; height: 32px; margin: 0 10px;">
+        </div>
+    </div>
     `;
     this.sendMail("TungTee888 Bookings", sendTo, "[TungTee888 Bookings] กรุณายืนยันการจองของคุณ", emailBody);
 };

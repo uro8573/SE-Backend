@@ -111,7 +111,7 @@ module.exports=router;
  *      tags: [Hotels]
  *      responses:
  *        200:
- *          description: The list of the hospitals
+ *          description: The list of the hotels
  *          content:
  *            application/json:
  *              schema:
@@ -147,7 +147,9 @@ module.exports=router;
 /**
  * @swagger
  * /hotels:
- *    post:
+ *   post:
+ *      security:
+ *         - bearerAuth: []
  *      summary: Create a new hotel
  *      tags: [Hotels]
  *      requestBody:
@@ -167,54 +169,61 @@ module.exports=router;
  *          description: Unauthorized
  */
 
+
+
 /**
  * @swagger
- * /hospitals/{id}:
- *  put:
- *    summary: Update the hospital by the id
- *    tags: [Hospitals]
+ * /hotels/{id}:
+ *   put:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Update the hotel by the id
+ *    tags: [Hotels]
  *    parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *        required: true
- *        description: The hospital id
+ *        description: The hotel id
  *    requestBody:
- *      required: true
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/Hospital'
- *    responses:
- *      200:
- *        description: The hospital was updated
+ *        required: true
  *        content:
+ *            application/json:
+ *               schema:
+ *                  $ref: '#/components/schemas/Hotel'
+ *    responses:
+ *       201:
+ *         description: The hotel was updated
+ *         content:
  *          application/json:
- *          schema:
- *            $ref: '#/components/schemas/Hospital'
- *      404:
- *        description: The hospital was not found
- *      500:
- *        description: Some error happened
+ *           schema:
+ *            $ref: '#/components/schemas/Hotel'
+ *       404:
+ *         description: The hotel was not found
+ *       500:
+ *         description: Some error happened
  */
+
 
 /**
  * @swagger
- * /hospitals/{id}:
+ * /hotels/{id}:
  *   delete:
- *     summary: Remove the hospital by id
- *     tags: [Hospitals]
+ *     security:
+ *      - bearerAuth: []
+ *     summary: Remove the hotel by id
+ *     tags: [Hotels]
  *     parameters:
  *       - in: path
  *         name: id
  *         schema:
  *           type: string
  *         required: true
- *         description: The hospital id
+ *         description: The hotel id
  *     responses:
  *       200:
- *         description: The hospital was deleted
+ *         description: The hotel was deleted
  *       404:
- *         description: The hospital was not found
+ *         description: The hotel was not found
  */
