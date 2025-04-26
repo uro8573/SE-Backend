@@ -40,7 +40,7 @@ exports.sendVerifyOTP = async (sendTo, otp) => {
 
     const emailBody = `
         <div style="font-family: Arial, sans-serif; background: #ffffff; text-align: center; padding: 40px 20px; color: #000;">
-            <div style="width: 100px; height: 100px; background: #ccc; border-radius: 50%; margin: 0 auto 20px auto;"></div>
+            <img src="https://i.imgur.com/BAM8Gb4.png" style="width: 100px; height: 100px; background: #ccc; border-radius: 50%; margin: 0 auto 20px auto;"></img>
             <div style="font-size: 20px; margin-bottom: 20px; font-weight: bold;">Your Signup Verification Code</div>
             <div style="font-size: 24px; font-weight: bold; letter-spacing: 20px;">${otp}</div>
             <div style="margin-top: 10px; font-size: 14px;">Don't share this code to anyone!</div>
@@ -66,7 +66,7 @@ exports.sendBookingConfirmation = async (sendTo, confirmationUrl) => {
     const emailBody = `
         <div style="font-family: Arial, sans-serif; background: #ffffff; text-align: center; padding: 40px 20px; color: #000;">
         <!-- Icon placeholder -->
-        <div style="width: 100px; height: 100px; background: #ccc; border-radius: 50%; margin: 0 auto 20px auto;"></div>
+        <img src="https://i.imgur.com/BAM8Gb4.png" style="width: 100px; height: 100px; background: #ccc; border-radius: 50%; margin: 0 auto 20px auto;"></img>
 
         <!-- Title -->
         <div style="font-size: 20px; margin-bottom: 20px; font-weight: bold;">Confirm Your Reservation</div>
