@@ -5,33 +5,23 @@ dotenv.config({ path: "./config/config.env" });
 
 /* Email Service Provider */
 
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-let configOptions = {
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.TRANSPORTER_EMAIL,
-        pass: process.env.TRANSPORTER_PASS
-    }
-}
-const transporter = nodemailer.createTransport(configOptions);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /* ---------------------- */
 
 exports.sendMail = async (sender, sendTo, subject, html) => {
 
-    transporter.sendMail({
+    const { data, error } = await resend.emails.send({
         from: sender,
         to: sendTo,
         subject: subject,
         html: html
-    }).then((res) => {
-        console.log(res.response);
-    }).catch(err => {
-        console.error(err);
     });
+
+    if(error) console.error({error});
+    else console.log({ data });
 
 }
 
