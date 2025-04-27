@@ -19,6 +19,7 @@ const bookings = require("./routes/bookings");
 const user = require("./routes/user");
 const reviews = require("./routes/reviews")
 const notification = require("./routes/notification")
+const config = require("./routes/config");
 
 const app = express();
 app.use(express.json());
@@ -64,6 +65,7 @@ app.use("/api/v1/bookings", bookings);
 app.use("/api/v1/reviews", reviews);
 app.use("/api/v1/user", user);
 app.use("/api/v1/notifications", notification);
+app.use("/api/v1/config", config);
 
 // ------ Swagger ------ //
 
