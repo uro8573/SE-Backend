@@ -232,7 +232,7 @@ exports.addReview = async (req, res, next) => {
 
         if (userReview) {
             return res.status(403).json({
-                sucesss: false,
+                success: false,
                 message: "You have already reviewed this hotel."
             })
         }
