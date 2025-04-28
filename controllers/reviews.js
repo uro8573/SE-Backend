@@ -241,7 +241,7 @@ exports.addReview = async (req, res, next) => {
         req.body.user = req.user.id;
 
         const review = await Review.create(req.body);
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             data: review
         });
