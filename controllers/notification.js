@@ -12,12 +12,12 @@ exports.getNotifications = async (req, res, next) => {
         query = Notification.find({user : req.user.id}).populate({
             path: 'user',
             select: 'name email'
-        });
+        }).sort({ createdAt: -1 }); 
     } else {
         query = Notification.find().populate({
             path: 'user',
             select: 'name email'
-        });
+        }).sort({ createdAt: -1 });
     }
 
     try {
