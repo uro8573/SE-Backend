@@ -229,7 +229,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /bookings/confirm/{bookingId}/{token}:
+ * /bookings/confirm/{bookingId}/{confirmtoken}:
  *    get:
  *      summary: Confirm the booking by id
  *      tags: [Bookings]
