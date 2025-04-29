@@ -214,7 +214,8 @@ exports.addReview = async (req, res, next) => {
         const booking = await Booking.findOne({
             user: req.user.id,
             hotel: req.body.hotel,
-            checkOutDate: { $lt: new Date() }
+            checkOutDate: { $lt: new Date() },
+            isConfirmed: true
         });
 
         if (!booking) {
