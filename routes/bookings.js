@@ -45,11 +45,6 @@ module.exports = router;
  *         - user
  *         - hotel
  *       properties:
- *         _id:
- *           type: string
- *           format: uuid
- *           description: The auto-generated id of the booking
- *           example: 6604b537a41b7d6d6e694e4e
  *         guest:
  *           type: number
  *           description: Number of guest on booking
@@ -241,7 +236,7 @@ module.exports = router;
  *          required: true
  *          description: The booking id
  *        - in: path
- *          name: token
+ *          name: confirmtoken
  *          schema:
  *          type: string
  *          required: true
