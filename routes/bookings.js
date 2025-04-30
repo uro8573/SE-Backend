@@ -73,7 +73,6 @@ module.exports = router;
  *           type: string
  *           description: The date that this booking was created
  *       example:
- *           _id: 609bda561452242d88d36e37
  *           guest: 4
  *           room: 456
  *           checkInDate: 2025-01-01
